@@ -15,3 +15,5 @@ change 6
 change 7
 
 change 8
+
+release/1.0.0
