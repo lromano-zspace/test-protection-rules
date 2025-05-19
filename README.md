@@ -17,3 +17,5 @@ change 7
 change 8
 
 new change
+
+release/1.0.0

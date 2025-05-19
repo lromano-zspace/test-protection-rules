@@ -16,8 +16,8 @@ jobs:
         run: |
           gh api repos/${{ github.repository }}/statuses/${{ github.event.pull_request.head.sha }} \
             -f state=success \
-            -f context="up-to-date-check-bypass" \
-            -f description="Bypassed up-to-date check for release/*" \
+            -f context="up-to-date-check" \
+            -f description="Bypassed up-to-date check for release branch" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
