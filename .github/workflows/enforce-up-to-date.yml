@@ -1,0 +1,26 @@
+name: Enforce Up-to-Date (with release/* exception)
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-up-to-date:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip if branch is release/*
+        if: startsWith(github.head_ref, 'release/')
+        run: echo "Skipping up-to-date check for release/* branch"
+
+      - name: Fetch PR and main branch
+        if: ${{ !startsWith(github.head_ref, 'release/') }}
+        run: |
+          git fetch origin main
+          BASE=$(git merge-base HEAD origin/main)
+          HEAD=$(git rev-parse HEAD)
+          if [ "$BASE" != "$(git rev-parse origin/main)" ]; then
+            echo "❌ This branch is behind main. Please rebase or merge main before continuing."
+            exit 1
+          else
+            echo "✅ Branch is up to date with main."
+          fi
