@@ -1,4 +1,4 @@
-name: Release Branch Bypass for Up-to-Date Check
+name: Bypass Up-to-Date Check for Release Branches
 
 on:
   pull_request:
@@ -9,15 +9,16 @@ jobs:
     if: startsWith(github.head_ref, 'release/')
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      statuses: write
+      statuses: write # Needed to set commit status
     steps:
-      - name: Set "up-to-date" check to success
+      - name: Set status to success to simulate "up-to-date" check
         run: |
-          gh api repos/${{ github.repository }}/statuses/${{ github.event.pull_request.head.sha }} \
-            -f state=success \
-            -f context="up-to-date-check-bypass" \
-            -f description="Bypassed up-to-date check for release/*" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.event.pull_request.head.sha }} \
+            -d '{
+              "state": "success",
+              "context": "up-to-date-check-bypass",
+              "description": "Bypassed up-to-date check for release/*"
+            }'
